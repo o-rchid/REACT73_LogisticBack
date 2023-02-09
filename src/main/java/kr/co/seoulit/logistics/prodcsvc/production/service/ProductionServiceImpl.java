@@ -31,7 +31,7 @@ public class ProductionServiceImpl implements ProductionService {
 	private MrpMapper mrpMapper;
 
 	@Override
-	public ArrayList<MpsTO> getMpsList(String startDate, String endDate, String includeMrpApply) {
+	public ArrayList<MpsTO> getMpsList(String startDate, String endDate) {
 
 		ArrayList<MpsTO> mpsTOList = null;
 
@@ -39,7 +39,6 @@ public class ProductionServiceImpl implements ProductionService {
 
 		map.put("startDate", startDate);
 		map.put("endDate", endDate);
-		map.put("includeMrpApply", includeMrpApply);
 
 		mpsTOList = mpsMapper.selectMpsList(map);
 
@@ -105,21 +104,18 @@ public class ProductionServiceImpl implements ProductionService {
 	public HashMap<String, Object> convertContractDetailToMps(
 			ContractDetailInMpsAvailableTO contractDetailInMpsAvailableTO) {
 
-		System.out.println("MPS 등록 ServiceImpl");
+		System.out.println("MPS 등록 ServiceImpl 실행");
 
+		//결과 반환용
 		HashMap<String, Object> resultMap = null;
 
+		//batch 처리용
 		ArrayList<MpsTO> mpsTOList = new ArrayList<>();
 
-		MpsTO newMpsBean = null;
-
-
-		System.out.println("convertContractDetailToMps ApplicationServiceImpl접근----------------------------"
-				+ contractDetailInMpsAvailableTO.getContractDetailNo());
-		newMpsBean = new MpsTO();
+		//batch 처리에 넘겨주기 위한 MpsTO
+		MpsTO newMpsBean = new MpsTO();
 
 		newMpsBean.setStatus("INSERT");
-
 		newMpsBean.setMpsPlanClassification(contractDetailInMpsAvailableTO.getPlanClassification());
 		newMpsBean.setContractDetailNo(contractDetailInMpsAvailableTO.getContractDetailNo());
 		newMpsBean.setItemCode(contractDetailInMpsAvailableTO.getItemCode());
@@ -133,11 +129,8 @@ public class ProductionServiceImpl implements ProductionService {
 
 		mpsTOList.add(newMpsBean);
 
+		resultMap = batchMpsListProcess(mpsTOList);
 
-
-		resultMap = batchMpsListProcess(mpsTOList); //batchMpsListProcess 메소드 호출
-
-		System.out.println("Impl 지남");
 		return resultMap;
 
 	}
@@ -182,69 +175,47 @@ public class ProductionServiceImpl implements ProductionService {
 	@Override
 	public HashMap<String, Object> batchMpsListProcess(ArrayList<MpsTO> mpsTOList) {
 
-		HashMap<String, Object> resultMap = null;
-		resultMap = new HashMap<>();
-		System.out.println("application다음으로 옮겨온곳 = " + mpsTOList);
+		System.out.println("batchMpsListProcess 실행");
+
+		HashMap<String, Object> resultMap = new HashMap<>();
 		ArrayList<String> insertList = new ArrayList<>();
 		ArrayList<String> updateList = new ArrayList<>();
 		ArrayList<String> deleteList = new ArrayList<>();
 
 		for (MpsTO bean : mpsTOList) {
 
-			String status = bean.getStatus();
-
-			System.out.println("bean에서 뽑아낸 status의 값은 ::::::::::" + status);
-
-			switch (status) {
+			switch (bean.getStatus()) {
 
 				case "INSERT":
-
 					String newMpsNo = getNewMpsNo(bean.getMpsPlanDate());
-
 					bean.setMpsNo(newMpsNo);
-
 					mpsMapper.insertMps(bean);
-
 					insertList.add(newMpsNo);
-
 					if (bean.getContractDetailNo() != null) {
-
+						//수주상세에 처리상태(PROCESSING_STATUS) Y
 						changeMpsStatusInContractDetail(bean.getContractDetailNo(), "Y");
-
 					} else if (bean.getSalesPlanNo() != null) {
-
+						//판매계획 MPS(MPS_APPLY_STATUS) 적용상태 Y
 						changeMpsStatusInSalesPlan(bean.getSalesPlanNo(), "Y");
-
 					}
-
 					break;
 
 				case "UPDATE":
-
 					mpsMapper.updateMps(bean);
-
 					updateList.add(bean.getMpsNo());
-
 					break;
 
 				case "DELETE":
-
 					mpsMapper.deleteMps(bean);
-
 					deleteList.add(bean.getMpsNo());
-
 					break;
-
 			}
-
 		}
-
 		resultMap.put("INSERT", insertList);
 		resultMap.put("UPDATE", updateList);
 		resultMap.put("DELETE", deleteList);
 
 		return resultMap;
-
 	}
 
 	@Override
@@ -507,23 +478,14 @@ public class ProductionServiceImpl implements ProductionService {
 	}
 	public String getNewMpsNo(String mpsPlanDate) {
 		StringBuffer newEstimateNo = null;
-		List<MpsTO> mpsTOlist = mpsMapper.selectMpsCount(mpsPlanDate);
-		TreeSet<Integer> intSet = new TreeSet<>();
-		for (MpsTO bean : mpsTOlist) {
-			String mpsNo = bean.getMpsNo();
-			// MPS 일련번호에서 마지막 2자리만 가져오기
-			int no = Integer.parseInt(mpsNo.substring(mpsNo.length() - 2, mpsNo.length()));
-			intSet.add(no);
-		}
-		int i=1;
-		if (!intSet.isEmpty()) {
-			i=intSet.pollLast() + 1;
-		}
+		Integer num = mpsMapper.selectMpsCount(mpsPlanDate);
+		int nextMpsNo = 1;
+		if(num != null) { nextMpsNo = num+1;}
 
 		newEstimateNo = new StringBuffer();
 		newEstimateNo.append("PS");
 		newEstimateNo.append(mpsPlanDate.replace("-", ""));
-		newEstimateNo.append(String.format("%02d", i)); //PS2020042401
+		newEstimateNo.append(String.format("%02d", nextMpsNo)); //PS2020042401
 
 		return newEstimateNo.toString();
 	}

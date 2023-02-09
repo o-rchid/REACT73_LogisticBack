@@ -219,7 +219,7 @@
 	</resultMap>
 
 	<select id="selectContractDetailListInMpsAvailable" parameterType="map" resultMap="contractDetailInMpsAvailableResult">
-		SELECT C.CONTRACT_NO,
+		SELECT C.CONTRACT_NO, -- agGrid 에서 안 쓰는 행
 		C.CONTRACT_TYPE,
 		C.CONTRACT_DATE,
 		C.CUSTOMER_CODE,

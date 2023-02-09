@@ -24,13 +24,10 @@
 		WHERE TO_DATE(MPS_PLAN_DATE, 'YYYY-MM-DD')
 		BETWEEN
 		TO_DATE(#{startDate},'YYYY-MM-DD') AND TO_DATE(#{endDate},'YYYY-MM-DD')
-		<if test="includeMrpApply=='excludeMrpApply'">
-			AND MRP_APPLY_STATUS IS NULL
-		</if>
 	</select>
 
-	<select id="selectMpsCount" parameterType="string" resultMap="mpsResultMap">
-		SELECT * FROM MPS WHERE MPS_PLAN_DATE = #{mpsPlanDate}
+	<select id="selectMpsCount" parameterType="string" resultType="integer">
+		SELECT count(*) FROM MPS WHERE MPS_PLAN_DATE = #{mpsPlanDate}
 	</select>
 
 	<insert id="insertMps" parameterType="kr.co.seoulit.logistics.prodcsvc.production.to.MpsTO">

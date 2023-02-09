@@ -11,7 +11,7 @@ import kr.co.seoulit.logistics.prodcsvc.production.to.SalesPlanInMpsAvailableTO;
 
 public interface ProductionService {
 
-	public ArrayList<MpsTO> getMpsList(String startDate, String endDate, String includeMrpApply);
+	public ArrayList<MpsTO> getMpsList(String startDate, String endDate);
 
 	public ArrayList<ContractDetailInMpsAvailableTO>
 	getContractDetailListInMpsAvailable(String searchCondition, String startDate, String endDate);

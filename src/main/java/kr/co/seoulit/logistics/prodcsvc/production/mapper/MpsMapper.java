@@ -13,7 +13,7 @@ public interface MpsMapper {
 
 	public ArrayList<MpsTO> selectMpsList(HashMap<String, String> map);
 
-	public List<MpsTO> selectMpsCount(String mpsPlanDate);
+	public Integer selectMpsCount(String mpsPlanDate);
 
 	public void insertMps(MpsTO TO);
 

@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -19,7 +20,16 @@ import kr.co.seoulit.logistics.sys.interceptor.LoginInterceptor;
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer{
 
-	
+	private final long MAX_AGE_SEC = 3600;
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+				.allowedOriginPatterns("http://localhost:3000")
+				.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS").allowedHeaders("*")
+				.maxAge(MAX_AGE_SEC);
+	}
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry){
 		registry.addInterceptor(new LoginInterceptor())
