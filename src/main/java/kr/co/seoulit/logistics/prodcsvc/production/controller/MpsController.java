@@ -60,6 +60,8 @@ public class MpsController {
 		String searchCondition = request.getParameter("searchCondition");
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
+		System.out.println("endDate = " + endDate);
+		System.out.println("searchCondition = " + searchCondition);
 		map = new ModelMap();
 		try {
 			ArrayList<ContractDetailInMpsAvailableTO> contractDetailInMpsAvailableList = 

@@ -4,6 +4,8 @@ import java.nio.charset.Charset;
 
 import javax.servlet.Filter;
 
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -25,10 +27,11 @@ public class WebMvcConfiguration implements WebMvcConfigurer{
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-				.allowedOriginPatterns("http://localhost:3000")
+				.allowedOrigins("http://localhost:3000")
 				.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS").allowedHeaders("*")
 				.maxAge(MAX_AGE_SEC);
 	}
+
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry){
@@ -54,7 +57,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer{
 		
 		return characterEncodingFilter;
 	}
-	
+
 	@Bean
 	public HttpMessageConverter<String> responseBodyConverter(){
 		return new StringHttpMessageConverter(Charset.forName("UTF-8"));
@@ -67,5 +70,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer{
 		multipartResolver.setMaxUploadSizePerFile(10 * 1024 * 1024);
 		return multipartResolver;
 	  }
+
 
 }

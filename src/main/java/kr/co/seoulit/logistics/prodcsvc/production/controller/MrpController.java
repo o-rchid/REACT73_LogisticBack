@@ -1,16 +1,16 @@
 package kr.co.seoulit.logistics.prodcsvc.production.controller;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -61,14 +61,13 @@ public class MrpController {
 	}
 	
 	
-	@RequestMapping(value="/mrp/open", method=RequestMethod.GET)
-	public ModelMap openMrp(HttpServletRequest request, HttpServletResponse response) {
-		String mpsNoListStr = request.getParameter("mpsNoList");
+	@GetMapping("/mrp/open")
+	public ModelMap openMrp(@RequestParam(value="mpsNoList[]") ArrayList<String> mpsNoList, HttpServletRequest request) {
+		System.out.println("request.getQueryString() = " + request.getQueryString());
+		System.out.println("mpsNoList = " + mpsNoList);
 		map = new ModelMap();
 		try {
-			ArrayList<String> mpsNoArr = gson.fromJson(mpsNoListStr,
-					new TypeToken<ArrayList<String>>() { }.getType());
-			HashMap<String, Object> mrpMap = productionService.openMrp(mpsNoArr);
+			HashMap<String, Object> mrpMap = productionService.openMrp(mpsNoList);
 			
 			map.put("gridRowJson", mrpMap.get("result"));
 			map.put("errorCode", mrpMap.get("errorCode"));
@@ -82,15 +81,11 @@ public class MrpController {
 	}
 
 	
-	@RequestMapping(value="/mrp", method=RequestMethod.POST)
-	public ModelMap registerMrp(HttpServletRequest request, HttpServletResponse response) {
-		String batchList = request.getParameter("batchList"); 
-		String mrpRegisterDate = request.getParameter("mrpRegisterDate");
+	@GetMapping("/mrp")
+	public ModelMap registerMrp(@RequestParam String mrpRegisterDate) {
 		map = new ModelMap();
 		try {
-			ArrayList<String> mpsList = gson.fromJson(batchList, 
-					new TypeToken<ArrayList<String>>() { }.getType());
-			HashMap<String, Object> resultMap = productionService.registerMrp(mrpRegisterDate, mpsList);	 
+			HashMap<String, Object> resultMap = productionService.registerMrp(mrpRegisterDate);
 			
 			map.put("result", resultMap.get("result"));
 			map.put("errorCode", resultMap.get("errorCode"));

@@ -30,7 +30,7 @@
 	</select>
 
 	<select id="selectMpsCount" parameterType="string" resultMap="mpsResultMap">
-		SELECT * FROM MPS WHERE MPS_PLAN_DATE = #{mpsPlanDate}
+		SELECT COUNT(*) FROM MPS WHERE MPS_PLAN_DATE = #{mpsPlanDate}
 	</select>
 
 	<insert id="insertMps" parameterType="kr.co.seoulit.logistics.prodcsvc.production.to.MpsTO">

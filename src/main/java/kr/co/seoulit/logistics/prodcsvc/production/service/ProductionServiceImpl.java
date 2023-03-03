@@ -192,10 +192,10 @@ public class ProductionServiceImpl implements ProductionService {
 					mpsMapper.insertMps(bean);
 					insertList.add(newMpsNo);
 					if (bean.getContractDetailNo() != null) {
-						//수주상세에 처리상태(PROCESSING_STATUS) Y
+						//수주상세 테이블 처리상태(PROCESSING_STATUS) Y
 						changeMpsStatusInContractDetail(bean.getContractDetailNo(), "Y");
 					} else if (bean.getSalesPlanNo() != null) {
-						//판매계획 MPS(MPS_APPLY_STATUS) 적용상태 Y
+						//판매계획 테이블 MPS 적용상태(MPS_APPLY_STATUS) Y
 						changeMpsStatusInSalesPlan(bean.getSalesPlanNo(), "Y");
 					}
 					break;
@@ -280,7 +280,7 @@ public class ProductionServiceImpl implements ProductionService {
 
 	@Override
 	public HashMap<String, Object> openMrp(ArrayList<String> mpsNoArr) {
-
+		System.out.println("mpsNoArr.toString() = " + mpsNoArr.toString());
 		String mpsNoList = mpsNoArr.toString().replace("[", "").replace("]", "");
 
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -301,7 +301,7 @@ public class ProductionServiceImpl implements ProductionService {
 	}
 
 	@Override
-	public HashMap<String, Object> registerMrp(String mrpRegisterDate, ArrayList<String> mpsList) {
+	public HashMap<String, Object> registerMrp(String mrpRegisterDate) {
 
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
@@ -314,17 +314,6 @@ public class ProductionServiceImpl implements ProductionService {
 		resultMap.put("result", map.get("RESULT"));
 		resultMap.put("errorCode", map.get("ERROR_CODE"));
 		resultMap.put("errorMsg", map.get("ERROR_MSG"));
-
-		for (String mpsNo : mpsList) {
-
-			HashMap<String, String> mpsMap = new HashMap<>();
-
-			mpsMap.put("mpsNo", mpsNo);
-			mpsMap.put("mrpStatus", "Y");
-
-			mpsMapper.changeMrpApplyStatus(mpsMap);
-
-		}
 
 		return resultMap;
 	}

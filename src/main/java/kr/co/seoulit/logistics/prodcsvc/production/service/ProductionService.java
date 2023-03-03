@@ -40,8 +40,7 @@ public interface ProductionService {
 
 	public HashMap<String, Object> openMrp(ArrayList<String> mpsNoArr);
 
-	public HashMap<String, Object> registerMrp(String mrpRegisterDate,
-											   ArrayList<String> mpsList);
+	public HashMap<String, Object> registerMrp(String mrpRegisterDate);
 
 	public HashMap<String, Object> batchMrpListProcess(ArrayList<MrpTO> mrpTOList);
 

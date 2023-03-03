@@ -33,7 +33,7 @@ public class CompanyController {
 	private static Gson gson = new GsonBuilder().serializeNulls().create(); // 속성값이 null 인 속성도 JSON 변환
 
 	@RequestMapping(value = "/company/list", method = RequestMethod.GET)
-	public ModelMap searchCompanyList(HttpServletRequest request, HttpServletResponse response) {
+	public ModelMap searchCompanyList() {
 		map = new ModelMap();
 		try {
 			ArrayList<CompanyTO> companyList  = compInfoService.getCompanyList();
